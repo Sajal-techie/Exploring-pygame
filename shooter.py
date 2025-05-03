@@ -17,8 +17,13 @@ explosion_sound = pygame.mixer.Sound("sounds/explosion.wav")
 game_over_sound = pygame.mixer.Sound("sounds/game_over.wav")
 lose_point_sound = pygame.mixer.Sound("sounds/lose_point.wav")
 
+#images
+player_img = pygame.image.load("images/player.png").convert_alpha()
+enemy_img = pygame.image.load("images/enemy.png").convert_alpha()
+
 # Set the frame rate
 clock = pygame.time.Clock()
+clock_value = 60
 
 # Fonts
 font = pygame.font.SysFont(None, 36)
@@ -26,7 +31,7 @@ game_over_font = pygame.font.SysFont(None, 72)
 
 # Player settings
 player_width = 50
-player_height = 60
+player_height = 50
 player_x = screen_width // 2 - player_width // 2
 player_y = screen_height - player_height - 10
 player_speed = 5
@@ -40,7 +45,7 @@ bullets = []
 
 # Enemy settings
 enemy_width = 50
-enemy_height = 60
+enemy_height = 50
 enemy_speed = 2
 enemies = []
 enemy_timer = 0
@@ -100,6 +105,9 @@ while True:
                     bullets.remove(bullet)
                     enemies.remove(enemy)
                     score += 1
+                    if score % 5 == 0:
+                        enemy_speed += 1
+                        player_speed += 1
                     explosion_sound.play()
 
                     break
@@ -122,13 +130,18 @@ while True:
         screen.blit(game_over_text, (screen_width // 2 - game_over_text.get_width() // 2,
                                      screen_height // 2 - game_over_text.get_height() // 2))
     else:
-        pygame.draw.rect(screen, (0, 128, 255), (player_x, player_y, player_width, player_height))
+        # pygame.draw.rect(screen, (0, 128, 255), (player_x, player_y, player_width, player_height))
+        
+        # Draw player
+        screen.blit(player_img, (player_x, player_y))
 
         for bullet in bullets:
             pygame.draw.rect(screen, (255, 255, 255), (bullet[0], bullet[1], bullet_width, bullet_height))
 
         for enemy in enemies:
-            pygame.draw.rect(screen, (255, 0, 0), (enemy[0], enemy[1], enemy_width, enemy_height))
+            screen.blit(enemy_img, (enemy[0], enemy[1]))
+
+            # pygame.draw.rect(screen, (255, 0, 0), (enemy[0], enemy[1], enemy_width, enemy_height))
 
         # Draw score and health
         score_text = font.render(f"Score: {score}", True, (255, 255, 255))
@@ -137,4 +150,4 @@ while True:
         screen.blit(health_text, (10, 50))
 
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(clock_value)
